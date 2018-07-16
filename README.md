@@ -26,7 +26,7 @@ docker build -f DOCKERFILE -t php5-oci8 .
 
 ### Mount Project code
 * If you only need to host static php file, you can bind-mount your project file to `/app/web/${project_name}`. You will able to view your project at `https://localhost:${port_number}/${project_name}`.
-* If you are working on framework such as Laravel, you should bind-mount your project to `/app/source/${project_name}`. Then symbol link the `public` folder to `/app/web/${project_name}`
+* If you are working on framework such as Laravel, you should bind-mount your project to `/app/source/${project_name}`. Then symbol link the `public` folder to `/app/web/${project_name}`:
 ```ln -s /app/source/${project_name}/public /app/web/${project_name}```
 You will able to view your project at `https://localhost:${port_number}/${project_name}`.
 
