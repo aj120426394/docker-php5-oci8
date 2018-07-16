@@ -1,0 +1,28 @@
+#
+# Docker Compose Configuration, https://docs.docker.com/compose/.
+#
+
+version: '3.3'
+
+services:
+    app-local-db:
+        container_name: app-local-db
+        build: ./db
+        ports:
+            - "49161:1521"
+        restart: always
+        volumes:
+            - app-local-db-data:/var/lib/mysql
+        environment:
+            ORACLE_ALLOW_REMOTE: "true"
+
+    app-local-web:
+        depends_on:
+            - app-local-db
+        container_name: app-local-web
+        build: ./web
+        ports:
+            - "8080:80"
+        restart: always
+volumes:
+    app-local-db-data:
