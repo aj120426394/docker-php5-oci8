@@ -2,7 +2,7 @@
 The main DOCKERFILE locate at `${this_repo}/web` which is creating a evironment with PHP5+Oci8
 
 ## How to start?
----
+
 ### 1. Install
 Ensure [Docker](https://www.docker.com/) is installed
 
@@ -23,7 +23,7 @@ docker build -f DOCKERFILE -t php5-oci8 .
 ```
 
 # How to use the docker image?
----
+
 ### Mount Project code
 If you only need to host static php file, you can bind-mount your project file to `/app/web/${project_name}`. You will able to view your project at `https://localhost:${port_number}/${project_name}`.
 If you are working on framework such as Laravel, you should bind-mount your project to `/app/source/${project_name}`. Then symbol link the `public` folder to `/app/web/${project_name}`
