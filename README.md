@@ -9,9 +9,10 @@ Ensure [Docker](https://www.docker.com/) is installed
 ### 2. Clone
 Clone this repository to your workstation
 
-### 3. Modify template
-Modify template file which will replace the original file in the environment
-`vhost.conf`: /etc/apache2/sites-available/000-default.conf
+### 3. Create file from template
+Create 3 files `vhost.conf` `vhost-ssl.conf` `php.ini` from the template file and place them at them same template folder
+-`vhost.conf`
+This file will replace `/etc/apache2/sites-available/000-default.conf`
 `vhost-ssl.conf`" /etc/ache2/sites-available/default-ssl.conf
 `php.ini`: /usr/local/etc/php/
 
