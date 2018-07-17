@@ -22,7 +22,11 @@ services:
         container_name: app-local-web
         build: ./web
         ports:
-            - "8080:80"
+            - "${port_for_http}:80"
+            - "${port_for_https}:443"
         restart: always
+        volumes:
+          - ${your_laravel_project_repo}:/app/source
+        command: bash /where_ever_you_place_this_code_in_the_container/start.sh
 volumes:
     app-local-db-data:

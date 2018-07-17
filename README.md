@@ -11,10 +11,10 @@ Clone this repository to your workstation
 
 ### 3. Create file from template
 Create 3 files `vhost.conf` `vhost-ssl.conf` `php.ini` from the template file and place them at them same template folder
--`vhost.conf`
-This file will replace `/etc/apache2/sites-available/000-default.conf`
-`vhost-ssl.conf`" /etc/ache2/sites-available/default-ssl.conf
-`php.ini`: /usr/local/etc/php/
+- `vhost.conf`:This file will replace `/etc/apache2/sites-available/000-default.conf`. Put your VirtualHost for Http configuration here.
+- `vhost-ssl.conf`: This file will replace `/etc/ache2/sites-available/default-ssl.conf`. Put your Https VirtualHost configuration here.
+- `php.ini`: This file will be placed at`/usr/local/etc/php/`. Put your php configuration at this file.
+- *If you have your own certificate .crt/.key. Place it in `ssl_dev_certificate` with the name `localhost.crt` and `localhost.key`.*
 
 ### 4. Build the docker image
 Run
@@ -27,71 +27,50 @@ docker build -f DOCKERFILE -t php5-oci8 .
 
 ### Mount Project code
 * If you only need to host static php file, you can bind-mount your project file to `/app/web/${project_name}`. You will able to view your project at `https://localhost:${port_number}/${project_name}`.
-* If you are working on framework such as Laravel, you should bind-mount your project to `/app/source/${project_name}`. Then symbol link the `public` folder to `/app/web/${project_name}`:
-```ln -s /app/source/${project_name}/public /app/web/${project_name}```
-You will able to view your project at `https://localhost:${port_number}/${project_name}`.
+* If you are working on framework such as Laravel, you should bind-mount your project to `/app/source/${project_name}`. Then symbol link the `public` folder to `/app/web/${project_name}`.
 
-### docker-compose.yml example
-docker-compose.yml
-```
+```You can do this either ssh into the container or run the bash scrip when the container start```
+* You will able to view your project at `https://localhost:${port_number}/${project_name}`.
+
+### Example
+The following example is the way I setup my Laravel project with this image. You can use `docker-compose.example.yml` `start.example.sh` as the template to create your own. (*You can get rid of `app-local-db` part if you don't need Oracle database setup*)
+
+
+`docker-compose.yml`
+```yaml
 version: '3.3'
 
 services:
-    php-apache:
-        image: php5-oci8:latest
+    app-local-db:
+        container_name: app-local-db
+        build: ./db
+        ports:
+            - "49161:1521"
+        restart: always
+        volumes:
+            - app-local-db-data:/var/lib/mysql
+        environment:
+            ORACLE_ALLOW_REMOTE: "true"
+
+    app-local-web:
+        depends_on:
+            - app-local-db
+        container_name: app-local-web
+        build: ./web
         ports:
             - "8080:80"
             - "8081:443"
+        restart: always
         volumes:
-            - .:/app/source
-        command: bash /app/source/.docker/start.sh
+          - ../my_project:/app/source
+        command: bash /app/source/start.sh
+volumes:
+    app-local-db-data:
 ```
-start.sh
-```
-#!/bin/bash
 
-ln -s /app/source/public /app/web/vlen
-
-
-#!/bin/bash
-set -e
-
-# Note: we don't just use "apache2ctl" here because it itself is just a shell-script wrapper around apache2 which provides extra functionality like "apache2ctl start" for launching apache2 in the background.
-# (also, when run as "apache2ctl <apache args>", it does not use "exec", which leaves an undesirable resident shell process)
-
-: "${APACHE_CONFDIR:=/etc/apache2}"
-: "${APACHE_ENVVARS:=$APACHE_CONFDIR/envvars}"
-if test -f "$APACHE_ENVVARS"; then
-    . "$APACHE_ENVVARS"
-fi
-
-# Apache gets grumpy about PID files pre-existing
-: "${APACHE_RUN_DIR:=/var/run/apache2}"
-: "${APACHE_PID_FILE:=$APACHE_RUN_DIR/apache2.pid}"
-rm -f "$APACHE_PID_FILE"
-
-# create missing directories
-# (especially APACHE_RUN_DIR, APACHE_LOCK_DIR, and APACHE_LOG_DIR)
-for e in "${!APACHE_@}"; do
-    if [[ "$e" == *_DIR ]] && [[ "${!e}" == /* ]]; then
-        # handle "/var/lock" being a symlink to "/run/lock", but "/run/lock" not existing beforehand, so "/var/lock/something" fails to mkdir
-        #   mkdir: cannot create directory '/var/lock': File exists
-        dir="${!e}"
-        while [ "$dir" != "$(dirname "$dir")" ]; do
-            dir="$(dirname "$dir")"
-            if [ -d "$dir" ]; then
-                break
-            fi
-            absDir="$(readlink -f "$dir" 2>/dev/null || :)"
-            if [ -n "$absDir" ]; then
-                mkdir -p "$absDir"
-            fi
-        done
-
-        mkdir -p "${!e}"
-    fi
-done
-
-exec apache2 -DFOREGROUND "$@"
-
+`start.sh`: I place this in to source code repo.
+```bash
+# Place the code you want to run when the container start here.
+ln -s /app/source/public /app/web/my_project
+...
 ```
