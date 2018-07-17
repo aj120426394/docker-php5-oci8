@@ -9,14 +9,19 @@ Ensure [Docker](https://www.docker.com/) is installed
 ### 2. Clone
 Clone this repository to your workstation
 
-### 3. Create file from template
+### 3. Download [Oracle InstantClient(.zip) Files](http://www.oracle.com/technetwork/topics/linuxx86-64soft-092277.html) **basic, devel** and **sqlplus** into the `${this_repo}/web` directory. The file name should be:
+* instantclient-basic-linux.x64-12.1.0.2.0.zip
+* instantclient-sdk-linux.x64-12.1.0.2.0.zip
+* instantclient-sqlplus-linux.x64-12.1.0.2.0.zip
+
+### 4. Create file from template
 Create 3 files `vhost.conf` `vhost-ssl.conf` `php.ini` from the template file and place them at them same template folder
 - `vhost.conf`:This file will replace `/etc/apache2/sites-available/000-default.conf`. Put your VirtualHost for Http configuration here.
 - `vhost-ssl.conf`: This file will replace `/etc/ache2/sites-available/default-ssl.conf`. Put your Https VirtualHost configuration here.
 - `php.ini`: This file will be placed at`/usr/local/etc/php/`. Put your php configuration at this file.
 - *If you have your own certificate .crt/.key. Place it in `ssl_dev_certificate` with the name `localhost.crt` and `localhost.key`.*
 
-### 4. Build the docker image
+### 5. Build the docker image
 Run
 ```
 cd ${this_repo}/web
