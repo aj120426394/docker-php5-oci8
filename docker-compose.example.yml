@@ -27,6 +27,8 @@ services:
         restart: always
         volumes:
           - ${your_laravel_project_repo}:/app/source
+        environment:
+            BASE_URL: "${base_url_of_your_server}"
         command: bash /where_ever_you_place_this_code_in_the_container/start.sh
 volumes:
     app-local-db-data:
