@@ -29,6 +29,7 @@ services:
           - ${your_laravel_project_repo}:/app/source
         environment:
             BASE_URL: "${base_url_of_your_server}"
-        command: bash /where_ever_you_place_this_code_in_the_container/start.sh
+            PROJECT_NAME: ${your_project_name}
+        command: bash /app/start.sh
 volumes:
     app-local-db-data:

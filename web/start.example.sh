@@ -3,7 +3,7 @@
 # Place the code you want to run when the container start here.
 
 chomd -R 777 /app/source/public
-ln -s /app/source/public /app/web/${your_project_name}
+ln -s /app/source/public /app/web/$PROJECT_NAME
 
 
 

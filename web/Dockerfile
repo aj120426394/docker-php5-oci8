@@ -28,6 +28,7 @@ COPY templates/vhost.conf /etc/apache2/sites-available/000-default.conf
 COPY ssl_dev_certificate/localhost.crt /etc/ssl/localcerts/apache.crt
 COPY ssl_dev_certificate/localhost.key /etc/ssl/localcerts/apache.key
 COPY templates/vhost-ssl.conf /etc/apache2/sites-available/default-ssl.conf
+COPY start.example.sh /app/start.sh
 
 
 EXPOSE 80
