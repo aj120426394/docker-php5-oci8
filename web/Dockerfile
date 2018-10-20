@@ -18,16 +18,21 @@ RUN ln -s /usr/local/instantclient_12_1 /usr/local/instantclient
 RUN ln -s /usr/local/instantclient/libclntsh.so.12.1 /usr/local/instantclient/libclntsh.so
 RUN ln -s /usr/local/instantclient/libocci.so.12.1 /usr/local/instantclient/libocci.so
 RUN ln -s /usr/local/instantclient/sqlplus /usr/bin/sqlplus
-RUN echo 'instantclient,/usr/local/instantclient' | pecl install oci8-1.4.10
+#RUN echo 'instantclient,/usr/local/instantclient' | pecl install oci8-1.4.10
+RUN docker-php-ext-configure oci8 --with-oci8=instantclient,/usr/local/instantclient_12_1 && docker-php-ext-install oci8
 COPY templates/php.ini /usr/local/etc/php/
 
-RUN mkdir /app && mkdir /app/web && mkdir /app/source
+# Apache Configuration
+RUN mkdir /app && mkdir /app/web && mkdir /app/source && mkdir /app/security\ key
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 COPY templates/vhost.conf /etc/apache2/sites-available/000-default.conf
 COPY ssl_dev_certificate/localhost.crt /etc/ssl/localcerts/apache.crt
 COPY ssl_dev_certificate/localhost.key /etc/ssl/localcerts/apache.key
 COPY templates/vhost-ssl.conf /etc/apache2/sites-available/default-ssl.conf
+COPY templates/login.php /app/web/
+COPY templates/logout.php /app/web/
+COPY ["templates/pingsinglesignon.php","/app/security key/.pingsinglesignon.php"]
 COPY start.example.sh /app/start.sh
 
 
@@ -47,5 +52,6 @@ RUN a2enmod rewrite \
 WORKDIR /etc/apache2/sites-available
 RUN a2ensite default-ssl.conf
 
+WORKDIR /app/source
 
 

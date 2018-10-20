@@ -30,6 +30,7 @@ services:
         environment:
             BASE_URL: "${base_url_of_your_server}"
             PROJECT_NAME: ${your_project_name}
+        working_dir: "/app/source"
         command: bash /app/start.sh
 volumes:
     app-local-db-data:
