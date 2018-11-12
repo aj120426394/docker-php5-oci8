@@ -3,8 +3,8 @@ FROM php:5.6-apache
 ENV LD_LIBRARY_PATH /usr/local/instantclient_12_1/
 ENV APACHE_DOCUMENT_ROOT /app/web/
 
-RUN apt-get update && apt-get install -y apt-utils unzip libaio1 build-essential && apt-get clean -y && rm -r /var/lib/apt/lists/*
-
+RUN apt-get update && apt-get install -y apt-utils unzip libaio1 build-essential libpng-dev && apt-get clean -y && rm -r /var/lib/apt/lists/*
+RUN docker-php-ext-install gd
 # Oracle instantclient
 ADD instantclient-basic-linux.x64-12.1.0.2.0.zip /tmp/
 ADD instantclient-sdk-linux.x64-12.1.0.2.0.zip /tmp/
